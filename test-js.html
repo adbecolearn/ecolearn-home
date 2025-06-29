@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JavaScript Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🧪 EcoLearn JavaScript Test</h1>
+    
+    <div id="test-results"></div>
+    
+    <div class="test-section">
+        <h3>Test Buttons</h3>
+        <button id="testLoginBtn">Test Login Button</button>
+        <button id="testRegisterBtn">Test Register Button</button>
+        <button id="testGetStarted">Test Get Started</button>
+    </div>
+
+    <script type="module">
+        const results = document.getElementById('test-results');
+        
+        function addResult(test, success, message) {
+            const div = document.createElement('div');
+            div.className = `test-section ${success ? 'success' : 'error'}`;
+            div.innerHTML = `<h3>${test}</h3><p>${message}</p>`;
+            results.appendChild(div);
+        }
+
+        // Test 1: Basic JavaScript
+        try {
+            addResult('Basic JavaScript', true, 'JavaScript is working');
+        } catch (e) {
+            addResult('Basic JavaScript', false, e.message);
+        }
+
+        // Test 2: Import Shared Libraries
+        try {
+            const { initEcoLearn, carbonTracker, apiService, authUtils, config } = 
+                await import('https://adbecolearn.github.io/ecolearn-shared/index.js');
+            addResult('Shared Library Import', true, 'Successfully imported shared libraries');
+            
+            // Test 3: Initialize EcoLearn
+            try {
+                const ecolearn = initEcoLearn({
+                    carbonTracking: true,
+                    performanceMonitoring: true,
+                    debugMode: true
+                });
+                addResult('EcoLearn Initialization', true, 'EcoLearn initialized successfully');
+            } catch (e) {
+                addResult('EcoLearn Initialization', false, e.message);
+            }
+            
+        } catch (e) {
+            addResult('Shared Library Import', false, e.message);
+        }
+
+        // Test 4: Button Event Listeners
+        try {
+            document.getElementById('testLoginBtn').addEventListener('click', () => {
+                addResult('Login Button Click', true, 'Login button clicked successfully');
+                // Test redirect
+                console.log('Would redirect to: https://adbecolearn.github.io/ecolearn-auth/#login');
+            });
+            
+            document.getElementById('testRegisterBtn').addEventListener('click', () => {
+                addResult('Register Button Click', true, 'Register button clicked successfully');
+                console.log('Would redirect to: https://adbecolearn.github.io/ecolearn-auth/#register');
+            });
+            
+            document.getElementById('testGetStarted').addEventListener('click', () => {
+                addResult('Get Started Click', true, 'Get Started button clicked successfully');
+                console.log('Would redirect to auth or dashboard');
+            });
+            
+            addResult('Event Listeners', true, 'All event listeners attached successfully');
+        } catch (e) {
+            addResult('Event Listeners', false, e.message);
+        }
+
+        // Test 5: DOM Elements
+        try {
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const heroGetStarted = document.getElementById('heroGetStarted');
+            
+            if (loginBtn || registerBtn || heroGetStarted) {
+                addResult('DOM Elements', true, 'Found some main page elements');
+            } else {
+                addResult('DOM Elements', false, 'Main page elements not found (this is expected on test page)');
+            }
+        } catch (e) {
+            addResult('DOM Elements', false, e.message);
+        }
+    </script>
+</body>
+</html>

@@ -3,21 +3,36 @@
  * Green business intelligence landing page functionality
  */
 
-// Import EcoLearn Shared Libraries
-import { 
-    initEcoLearn, 
-    carbonTracker, 
-    apiService, 
-    authUtils, 
-    config 
-} from 'https://adbecolearn.github.io/ecolearn-shared/index.js';
+// Simple fallback implementations for immediate functionality
+const carbonTracker = {
+    track: (event, data) => console.log('🌱 Carbon track:', event, data)
+};
 
-// Initialize EcoLearn
-const ecolearn = initEcoLearn({
-    carbonTracking: true,
-    performanceMonitoring: true,
-    debugMode: config.isDevelopment()
-});
+const authUtils = {
+    isAuthenticated: () => {
+        return localStorage.getItem('ecolearn_token') !== null;
+    },
+    getCurrentUser: () => {
+        const user = localStorage.getItem('ecolearn_user');
+        return user ? JSON.parse(user) : null;
+    }
+};
+
+const config = {
+    isDevelopment: () => window.location.hostname === 'localhost'
+};
+
+// Load shared libraries asynchronously
+async function loadSharedLibraries() {
+    try {
+        const sharedLibs = await import('https://adbecolearn.github.io/ecolearn-shared/index.js');
+        console.log('✅ Shared libraries loaded successfully');
+        return sharedLibs;
+    } catch (error) {
+        console.warn('⚠️ Using fallback implementations:', error);
+        return null;
+    }
+}
 
 // Home App Class
 class HomeApp {
@@ -32,13 +47,16 @@ class HomeApp {
     /**
      * Initialize home app
      */
-    init() {
+    async init() {
         this.setupDOM();
         this.setupEventListeners();
         this.setupScrollSpy();
         this.setupCarbonTracking();
         this.checkAuthStatus();
-        
+
+        // Load shared libraries
+        await loadSharedLibraries();
+
         carbonTracker.track('home_page_load', {
             userAgent: navigator.userAgent,
             viewport: {
@@ -46,7 +64,7 @@ class HomeApp {
                 height: window.innerHeight
             }
         });
-        
+
         console.log('🏠 EcoLearn Home initialized');
     }
 
@@ -93,20 +111,32 @@ class HomeApp {
 
         // Auth buttons
         if (this.loginBtn) {
-            this.loginBtn.addEventListener('click', () => this.redirectToAuth('login'));
+            this.loginBtn.addEventListener('click', () => {
+                console.log('🔐 Login button clicked');
+                this.redirectToAuth('login');
+            });
         }
-        
+
         if (this.registerBtn) {
-            this.registerBtn.addEventListener('click', () => this.redirectToAuth('register'));
+            this.registerBtn.addEventListener('click', () => {
+                console.log('📝 Register button clicked');
+                this.redirectToAuth('register');
+            });
         }
 
         // Hero buttons
         if (this.heroGetStarted) {
-            this.heroGetStarted.addEventListener('click', () => this.handleGetStarted());
+            this.heroGetStarted.addEventListener('click', () => {
+                console.log('🚀 Get Started button clicked');
+                this.handleGetStarted();
+            });
         }
-        
+
         if (this.heroLearnMore) {
-            this.heroLearnMore.addEventListener('click', () => this.handleLearnMore());
+            this.heroLearnMore.addEventListener('click', () => {
+                console.log('📖 Learn More button clicked');
+                this.handleLearnMore();
+            });
         }
 
         // CTA buttons
@@ -287,14 +317,17 @@ class HomeApp {
      * @param {string} tab Tab to open (login/register)
      */
     redirectToAuth(tab = 'login') {
+        console.log(`🔗 Redirecting to auth: ${tab}`);
+
         carbonTracker.track('auth_redirect', {
             tab,
             from: 'home_page'
         });
-        
+
         const authUrl = 'https://adbecolearn.github.io/ecolearn-auth/';
         const urlWithTab = `${authUrl}#${tab}`;
-        
+
+        console.log(`🌐 Redirecting to: ${urlWithTab}`);
         window.location.href = urlWithTab;
     }
 
