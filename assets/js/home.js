@@ -3,36 +3,11 @@
  * Green business intelligence landing page functionality
  */
 
-// Simple fallback implementations for immediate functionality
-const carbonTracker = {
-    track: (event, data) => console.log('🌱 Carbon track:', event, data)
-};
-
-const authUtils = {
-    isAuthenticated: () => {
-        return localStorage.getItem('ecolearn_token') !== null;
-    },
-    getCurrentUser: () => {
-        const user = localStorage.getItem('ecolearn_user');
-        return user ? JSON.parse(user) : null;
-    }
-};
-
-const config = {
-    isDevelopment: () => window.location.hostname === 'localhost'
-};
-
-// Load shared libraries asynchronously
-async function loadSharedLibraries() {
-    try {
-        const sharedLibs = await import('https://adbecolearn.github.io/ecolearn-shared/index.js');
-        console.log('✅ Shared libraries loaded successfully');
-        return sharedLibs;
-    } catch (error) {
-        console.warn('⚠️ Using fallback implementations:', error);
-        return null;
-    }
-}
+// Import EcoLearn Shared Libraries
+import {
+    carbonTracker,
+    authUtils
+} from 'https://adbecolearn.github.io/ecolearn-shared/index.js';
 
 // Home App Class
 class HomeApp {
@@ -47,15 +22,12 @@ class HomeApp {
     /**
      * Initialize home app
      */
-    async init() {
+    init() {
         this.setupDOM();
         this.setupEventListeners();
         this.setupScrollSpy();
         this.setupCarbonTracking();
         this.checkAuthStatus();
-
-        // Load shared libraries
-        await loadSharedLibraries();
 
         carbonTracker.track('home_page_load', {
             userAgent: navigator.userAgent,
