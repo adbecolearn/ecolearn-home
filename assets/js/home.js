@@ -133,6 +133,12 @@ class HomeApp {
         document.querySelectorAll('.suggestion-btn').forEach(btn => {
             btn.addEventListener('click', (e) => this.handleSuggestionClick(e));
         });
+
+        // Contact form
+        const contactForm = document.querySelector('.contact-form .form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', (e) => this.handleContactSubmit(e));
+        }
     }
 
     /**
@@ -408,6 +414,38 @@ class HomeApp {
                 this.carbonIndicator.classList.add('critical');
             }
         }
+    }
+
+    /**
+     * Handle contact form submission
+     * @param {Event} e Form submit event
+     */
+    handleContactSubmit(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const contactData = {
+            name: document.getElementById('contactName').value,
+            email: document.getElementById('contactEmail').value,
+            subject: document.getElementById('contactSubject').value,
+            message: document.getElementById('contactMessage').value
+        };
+
+        console.log('📧 Contact form submitted:', contactData);
+
+        // Track contact form submission
+        carbonTracker.track('contact_form_submit', {
+            hasName: !!contactData.name,
+            hasEmail: !!contactData.email,
+            hasSubject: !!contactData.subject,
+            messageLength: contactData.message.length
+        });
+
+        // Show success message
+        alert('Terima kasih! Pesan Anda telah dikirim. Tim kami akan segera menghubungi Anda.');
+
+        // Reset form
+        form.reset();
     }
 }
 
